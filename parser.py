@@ -39,7 +39,7 @@ def test_crud_operations(db, data, iterations):
 
         # Save results
         test_results.append(crud_time_measurements)
-        print(crud_time_measurements)
+        print(f"{db.name}: {crud_time_measurements}")
 
     return test_results
 
@@ -53,16 +53,20 @@ def save_results_to_db(test_results, size, db_name):
     cursor = conn.cursor()
 
     for result in test_results:
-        cursor.execute(f'create table if not exists {db_name}_create_{size}')
+        cursor.execute(
+            f'create table if not exists {db_name}_create_{size} (run_id integer, time_measure numeric(19, 10))')
         cursor.execute(f'insert into {db_name}_create_{size} values ({result["run_id"]}, {result["CREATE"]})')
 
-        cursor.execute(f'create table if not exists {db_name}_read_{size}')
+        cursor.execute(
+            f'create table if not exists {db_name}_read_{size} (run_id integer, time_measure numeric(19, 10))')
         cursor.execute(f'insert into {db_name}_read_{size} values ({result["run_id"]}, {result["READ"]})')
 
-        cursor.execute(f'create table if not exists {db_name}_update_{size}')
+        cursor.execute(
+            f'create table if not exists {db_name}_update_{size} (run_id integer, time_measure numeric(19, 10))')
         cursor.execute(f'insert into {db_name}_update_{size} values ({result["run_id"]}, {result["UPDATE"]})')
 
-        cursor.execute(f'create table if not exists {db_name}_delete_{size}')
+        cursor.execute(
+            f'create table if not exists {db_name}_delete_{size} (run_id integer, time_measure numeric(19, 10))')
         cursor.execute(f'insert into {db_name}_delete_{size} values ({result["run_id"]}, {result["DELETE"]})')
 
     conn.commit()
@@ -79,8 +83,7 @@ if __name__ == "__main__":
 
     for database in databases:
         # Test launching
-        results = test_crud_operations(database, dataset, iterations=1000)
+        results = test_crud_operations(database, dataset, 1000)
 
         # Save results to postgres database
         save_results_to_db(results, 10000, database.name)
-
