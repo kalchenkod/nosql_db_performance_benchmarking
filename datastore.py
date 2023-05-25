@@ -3,7 +3,7 @@ from google.cloud import datastore
 
 
 class Datastore:
-    def init(self):
+    def __init__(self):
         credential_path = "#####"
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_path
         self.datastore_client = datastore.Client()

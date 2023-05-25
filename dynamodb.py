@@ -2,7 +2,7 @@ import boto3
 
 
 class DynamoDB:
-    def init(self):
+    def __init__(self):
         self.dynamodb_client = boto3.resource('dynamodb',
                                               aws_access_key_id='#####',
                                               aws_secret_access_key='##########',

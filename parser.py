@@ -53,9 +53,16 @@ def save_results_to_db(test_results, size, db_name):
     cursor = conn.cursor()
 
     for result in test_results:
+        cursor.execute(f'create table if not exists {db_name}_create_{size}')
         cursor.execute(f'insert into {db_name}_create_{size} values ({result["run_id"]}, {result["CREATE"]})')
+
+        cursor.execute(f'create table if not exists {db_name}_read_{size}')
         cursor.execute(f'insert into {db_name}_read_{size} values ({result["run_id"]}, {result["READ"]})')
+
+        cursor.execute(f'create table if not exists {db_name}_update_{size}')
         cursor.execute(f'insert into {db_name}_update_{size} values ({result["run_id"]}, {result["UPDATE"]})')
+
+        cursor.execute(f'create table if not exists {db_name}_delete_{size}')
         cursor.execute(f'insert into {db_name}_delete_{size} values ({result["run_id"]}, {result["DELETE"]})')
 
     conn.commit()

@@ -2,7 +2,7 @@ from azure.cosmos import CosmosClient
 
 
 class CosmosDB:
-    def init(self):
+    def __init__(self):
         url = "#####"
         key = '#####'
         self.cosmos_client = CosmosClient(url, credential=key)
