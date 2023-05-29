@@ -52,22 +52,27 @@ def save_results_to_db(test_results, size, db_name):
         password="#####")
     cursor = conn.cursor()
 
+    cursor.execute(
+        f'create table if not exists create_{size} (run_id integer, time_measure numeric(19, 10), db varchar(20))')
+    cursor.execute(
+        f'create table if not exists read_{size} (run_id integer, time_measure numeric(19, 10), db varchar(20))')
+    cursor.execute(
+        f'create table if not exists update_{size} (run_id integer, time_measure numeric(19, 10), db varchar(20))')
+    cursor.execute(
+        f'create table if not exists delete_{size} (run_id integer, time_measure numeric(19, 10), db varchar(20))')
+
     for result in test_results:
-        cursor.execute(
-            f'create table if not exists {db_name}_create_{size} (run_id integer, time_measure numeric(19, 10))')
-        cursor.execute(f'insert into {db_name}_create_{size} values ({result["run_id"]}, {result["CREATE"]})')
+        cursor.execute(f'insert into create_{size} ("run_id", "time_measure", "db") '
+                       f'values (%s, %s, %s)', (result["run_id"], result["CREATE"], db_name))
 
-        cursor.execute(
-            f'create table if not exists {db_name}_read_{size} (run_id integer, time_measure numeric(19, 10))')
-        cursor.execute(f'insert into {db_name}_read_{size} values ({result["run_id"]}, {result["READ"]})')
+        cursor.execute(f'insert into read_{size} (run_id, time_measure, db) '
+                       f'values (%s, %s, %s)', (result["run_id"], result["READ"], db_name))
 
-        cursor.execute(
-            f'create table if not exists {db_name}_update_{size} (run_id integer, time_measure numeric(19, 10))')
-        cursor.execute(f'insert into {db_name}_update_{size} values ({result["run_id"]}, {result["UPDATE"]})')
+        cursor.execute(f'insert into update_{size} (run_id, time_measure, db)'
+                       f'values (%s, %s, %s)', (result["run_id"], result["UPDATE"], db_name))
 
-        cursor.execute(
-            f'create table if not exists {db_name}_delete_{size} (run_id integer, time_measure numeric(19, 10))')
-        cursor.execute(f'insert into {db_name}_delete_{size} values ({result["run_id"]}, {result["DELETE"]})')
+        cursor.execute(f'insert into delete_{size} (run_id, time_measure, db)'
+                       f'values (%s, %s, %s)', (result["run_id"], result["DELETE"], db_name))
 
     conn.commit()
     conn.close()
